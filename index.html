@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>감염 구역</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Nanum+Pen+Script&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@500;700;900&family=Nanum+Pen+Script&display=swap">
 <style>
 :root,[data-theme=light]{
   --page:#cfc6b2;--bg:#e6dcc6;--panel:#dcd0b6;--btn:#d9ccb1;--btnh:#cfc1a4;--ink:#2a241e;--ink2:#4a4038;--muted:#5e5449;
@@ -324,6 +324,37 @@ kbd.cn,.kbhelp{display:none}
 .story:has(.pgdots[data-pg="2"]) .sitbox .gl{display:none}
 
 .story.tight > .loc{display:none}.story.tight .sitbox .gl{display:none}
+
+/* 26: 묘사 · 대사 · 효과음 */
+.story p.nar{color:var(--ink2)}
+q.dq{quotes:none;font-family:'Noto Sans KR','Noto Sans CJK KR',sans-serif;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.story p.dl{font-family:'Noto Sans KR','Noto Sans CJK KR',sans-serif;font-weight:700;color:var(--ink);font-size:17.5px;line-height:1.7;padding:4px 0 4px 12px;border-left:3px solid var(--ink)}
+p.sfx{font-family:'Noto Sans KR','Noto Sans CJK KR',sans-serif!important;font-weight:900!important;font-size:30px!important;letter-spacing:.1em;color:var(--red)!important;line-height:1.2!important;transform:rotate(-2.5deg);transform-origin:left center;margin:4px 0 0!important;word-break:keep-all}
+span.sfx.in{font-family:'Noto Sans KR','Noto Sans CJK KR',sans-serif;font-weight:900;color:var(--red);font-size:1.12em;letter-spacing:.04em}
+.u-txt p.sfx,.u-txt span.sfx{color:inherit!important}
+.ch-btn .act,.u-btn .act{display:block;font-size:12.5px;line-height:1.4;color:var(--muted);font-weight:400;margin-bottom:2px}
+.u-btn .act{color:inherit;opacity:.75}
+.ch-btn .say,.u-btn .say{font-family:'Noto Sans KR','Noto Sans CJK KR',sans-serif;font-weight:700}
+
+.dqb{display:block;margin:2px 0}
+/* 글씨 전체 조금 줄이기 */
+.story p{font-size:16.5px;line-height:1.85}
+.story p.dl{font-size:16px}
+p.sfx{font-size:27px!important}
+.ch-btn{font-size:15.5px;min-height:52px;padding:12px 15px}
+.ch-btn .act{font-size:12px}
+.sitbox .sit{font-size:14.5px}
+.sitbox .gl{font-size:11.5px}
+.loc{font-size:13px}
+.memo{font-size:22px}
+.u-txt{font-size:92%}
+.u-btn{font-size:95%}
+.banner{font-size:12.5px}
+.cht{font-size:31px}
+.chrc p,.chg p{font-size:14px}
+@media (min-width:1024px){#app.scn .story p{font-size:17px}#app.scn .ch-btn{font-size:15.5px;min-height:52px}#app.scn .hd .day{font-size:30px}#app.scn .loc{font-size:13px}}
+.day{font-size:28px}.who{font-size:20px}.clock{font-size:17px}
+.story.tight > p{line-height:1.68}.story.tight{gap:10px}.story.tight .dqb{margin:0}
 </style>
 </head>
 <body>
@@ -460,8 +491,8 @@ function advance(to,skip){if(to<=st.sec)return;const h=(to-st.sec)/3600;const fr
   if(sOn('fever')){st.hp-=Math.min(8,h*0.8);st.men-=Math.min(6,h*0.5)*mf}
   if(night()&&!st.crisis)st.men-=Math.min(2,h*0.2)*mf*(sOn('chill')?2:1);
   if(sOn('trauma')&&st.traumaSec&&to-st.traumaSec>5*86400){sDel('trauma');toastQ('조금씩 숨을 쉴 수 있게 됐다')}
-  if(st.hp>=60&&st.res>=60&&!sOn('exhM')){st.mb=(st.mb||0)+h*(sOn('trauma')?0.25:0.5)*(typeof menRF==='function'?menRF():1);const g=Math.min(4,Math.floor(st.mb));if(g>0){st.men=Math.min(100,st.men+g);st.mb-=g}}}
- else{const tr=sOn('trauma')?.5:1;const eR=sOn('exhR')?0:1,eM=sOn('exhM')?0:1;if(F('sheltered')){st.res=Math.min(100,st.res+(ECON.shR??5)*eR);st.men=Math.min(100,st.men+3*eM*(typeof menRF==='function'?menRF():1))}if(st.hp>=60&&st.res>=60)st.men=Math.min(100,st.men+3*tr*eM);const c=withC().length+(F('park')==='with'?1:0)+(F('junho')==='with'?1:0);st.men=clamp(st.men+(4+c*3)*tr*eM*(typeof menRF==='function'?menRF():1),-50,100)}
+  if(st.hp>=60&&st.res>=60&&!sOn('exhM')){st.mb=(st.mb||0)+h*(sOn('trauma')?0.17:0.33)*(typeof menRF==='function'?menRF():1);const g=Math.min(4,Math.floor(st.mb));if(g>0){st.men=Math.min(100,st.men+g);st.mb-=g}}}
+ else{const tr=sOn('trauma')?.5:1;const eR=sOn('exhR')?0:1,eM=sOn('exhM')?0:1;if(F('sheltered')){st.res=Math.min(100,st.res+(ECON.shR??5)*eR);st.men=Math.min(100,st.men+2*eM*(typeof menRF==='function'?menRF():1))}if(st.hp>=60&&st.res>=60)st.men=Math.min(100,st.men+2*tr*eM);const c=withC().length+(F('park')==='with'?1:0)+(F('junho')==='with'?1:0);st.men=clamp(st.men+(3+c*2)*tr*eM*(typeof menRF==='function'?menRF():1),-50,100)}
  if(sOn('starving')&&st.res<ZD.clr+.001){st.hp-=zDrain(st.starveSec,from,to,ZD.s0,ZD.s);st.lastCause='starve';hitMark.add('hp')}
  if(sOn('broken')&&st.men<ZD.clr+.001){st.hp-=zDrain(st.brokenSec,from,to,ZD.b0,ZD.b);st.lastCause='mind';hitMark.add('hp')}
  if(typeof sleepCheck==='function')sleepCheck(from,to,skip);
@@ -495,7 +526,7 @@ function go(id,opt={}){
  if(sc.crisis&&sc.crisis.note)st.crisis.note=sc.crisis.note;
  st.scene=id;
  if(sc.pl&&typeof mapAt==='function')mapAt(typeof sc.pl==='function'?sc.pl(st):sc.pl);
- if(sc.urgent){if(st.urgentN<2)return showUrgent(id);return go(sc.alt,{from})}
+ if(sc.urgent){if(st.urgentN<3)return showUrgent(id);return go(sc.alt,{from})}
  if(sc.enter){const r=sc.enter(st);if(r&&r!==id)return go(r,{from})}
  const dead=vitals();
  if(dead)return showDeath(dead);
@@ -644,7 +675,7 @@ function applyChoice(c,ok,pc,at,isU){const ct=josa(typeof c.t==='function'?c.t(s
   if(pc!=null){eff(ok?c.okEff:c.failEff);to=ok?c.ok:c.fail;const pb=st.banner;st.banner={t:`판정 ${ok?'성공':'실패'} · ${pc}%`+(pb?' — '+pb.t:''),bad:!ok||(pb&&pb.bad)}}else to=c.to;
   const pre=st.sec;if(c.adv)advance(st.sec+c.adv*60);
   to=resolve(to);
-  if(c.urgent&&(pc==null||!ok)){if(st.urgentN<2){busy=false;return showUrgent(c.urgent)}if(c.urgentAlt)to=resolve(c.urgentAlt)}
+  if(c.urgent&&(pc==null||!ok)){if(st.urgentN<3){busy=false;return showUrgent(c.urgent)}if(c.urgentAlt)to=resolve(c.urgentAlt)}
   busy=false;go(to,{from:pre})}
 function choose(c,btn){if(busy)return;busy=true;const at=st.sec,isU=screen==='urgent';
  const finish=(ok,pc)=>applyChoice(c,ok,pc,at,isU);
@@ -655,16 +686,15 @@ function choose(c,btn){if(busy)return;busy=true;const at=st.sec,isU=screen==='ur
 /* ===== 긴급 장면 ===== */
 function showUrgent(id){skyOff();const sc=S[id];screen='urgent';st.urgentN++;st.scene=id;save();
  if(sc.enter)sc.enter(st);
- let left=20;app.className='urgent';
+ let left=12;app.className='urgent';
  const cs=choiceList(sc);
- app.innerHTML=`<div class="u-top"><span class="u-lbl">긴 급</span><span class="u-num" id="un">20</span><span class="u-sub">${esc(sc.sub||'초 안에 고르지 않으면 끝이다')}</span></div>
+ app.innerHTML=`<div class="u-top"><span class="u-lbl">긴 급</span><span class="u-num" id="un">12</span><span class="u-sub">${esc(sc.sub||'초 안에 고르지 않으면 끝이다')}</span></div>
  <div class="u-bar"><i id="ub" style="width:100%"></i></div>
  <div class="u-txt">${textHTML(sc.text)}</div>
- <div class="choices">${cs.map((c,i)=>{const lr=lockReason(c);const t=esc(josa(typeof c.t==='function'?c.t(st):c.t));if(lr)return `<button class="u-btn" disabled><span>${t}</span><span style="font-size:12px;display:flex;gap:4px;align-items:center">${LOCK}${esc(lr)}</span></button>`;const pc=c.p!=null?prob(c):null;const nt=pc!=null?probNote(c):'';return `<button class="u-btn" data-i="${i}"><span>${t}</span>${pc!=null?`<span style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0"><span class="pc">${c.lethal?'치명 · ':''}${pc}%</span>${nt?`<span style="font-size:11px;font-weight:400;opacity:.8;white-space:nowrap">${esc(nt)}</span>`:''}</span>`:''}</button>`}).join('')}</div>
- <span class="u-note pen">이번 판 긴급 장면 ${st.urgentN} / 2</span>`;
+ <div class="choices">${cs.map((c,i)=>{const lr=lockReason(c);const t=esc(josa(typeof c.t==='function'?c.t(st):c.t));if(lr)return `<button class="u-btn" disabled><span>${t}</span><span style="font-size:12px;display:flex;gap:4px;align-items:center">${LOCK}${esc(lr)}</span></button>`;const pc=c.p!=null?prob(c):null;const nt=pc!=null?probNote(c):'';return `<button class="u-btn" data-i="${i}"><span>${t}</span>${pc!=null?`<span style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0"><span class="pc">${c.lethal?'치명 · ':''}${pc}%</span>${nt?`<span style="font-size:11px;font-weight:400;opacity:.8;white-space:nowrap">${esc(nt)}</span>`:''}</span>`:''}</button>`}).join('')}</div>`;
  app.querySelectorAll('.u-btn[data-i]').forEach(b=>b.onclick=()=>{clearInterval(uTimer);app.className='';choose(cs[+b.dataset.i],b)});
  window.scrollTo(0,0);
- uTimer=setInterval(()=>{left--;const n=$('#un');if(n)n.textContent=left;const b=$('#ub');if(b)b.style.width=(left/20*100)+'%';if(left<=0){clearInterval(uTimer);app.className='';go(sc.timeout||'death:timeout')}},1000)}
+ uTimer=setInterval(()=>{left--;const n=$('#un');if(n)n.textContent=left;const b=$('#ub');if(b)b.style.width=(left/12*100)+'%';if(left<=0){clearInterval(uTimer);app.className='';go(sc.timeout||'death:timeout')}},1000)}
 
 /* ===== 가방 ===== */
 function closeOv(){const o=$('.ov');if(o)o.remove()}
@@ -1761,8 +1791,8 @@ D.checkpoint={n:'검문소',h:'상처를 숨긴 채 군인 앞에 서지 말 것
 D.turned={n:'감염 은폐',h:'숨긴 상처는 결국 드러난다.',
  t:'팔의 상처가 더 이상 아프지 않았다. 열도 없었다. 괜찮은 줄 알았다.\n\n밤사이 체온이 떨어졌다. 마지막으로 남은 생각은, 누구에게도 들키지 않았다는 안도였다.',
  v:['다음 날 아침, 당신은 걷고 있었다. 어디로 가는지 모른 채.','{c}이(가) 아침에 당신을 깨우러 왔다. 그 뒤의 일은 당신이 모른다.','{d}일째. 끝까지 숨겼다. 그래서 끝났다.']};
-D.timeout={n:'멈춰 버린 20초',h:'긴급 장면에선 망설임도 선택이다.',
- t:'고르지 못했다. 손가락이 화면 위에서 떨리는 동안, 20초가 지나갔다.\n\n세상은 기다려 주지 않았다. 놈들도.',
+D.timeout={n:'멈춰 버린 12초',h:'긴급 장면에선 망설임도 선택이다.',
+ t:'고르지 못했다. 손가락이 화면 위에서 떨리는 동안, 12초가 지나갔다.\n\n세상은 기다려 주지 않았다. 놈들도.',
  v:['혼자였기에, 망설임을 깨워 줄 사람도 없었다.','{c}이(가) 소리쳤다. 「빨리!」 몸이 움직이지 않았다.','{d}일 동안 수천 번 결정했다. 마지막 한 번을 못 했다.']};
 D.executed={n:'처형',h:'약탈자에게 두 번째 기회는 없다.',
  t:'무릎이 꿇려졌다. 「사장」은 바쁜 사람처럼 시계를 보았다.\n\n「본보기야.」 다른 사람들이 보는 앞에서. 마지막으로 본 것은 냉장실 문 위의 숫자였다.',
@@ -2148,7 +2178,7 @@ D.fall.t='발이 허공을 디뎠다. 떨어지는 동안 생각할 시간이 �
 D.gas.t='가스 냄새에 익숙해졌다. 따뜻했으니까. 한밤중, 누군가 초에 불을 붙였다.\n\n집이 한 번 숨을 들이쉬었다가 내뱉었다. 압력이 먼저 왔다. 고막이 터지고 세상의 소리가 사라졌다. 그다음 불. 머리카락이 타는 냄새를 맡았다. 자기 머리카락이었다.\n\n얼굴에 손을 대자 피부가 장갑처럼 미끄러져 내려왔다. 소리 없는 세상에서, 불길만 아름답게 흔들렸다.';
 D.checkpoint.t='「소매 걷어.」 거짓말은 소용없었다. 군인은 상처를 보고 아무 표정 없이 고개를 끄덕였다.\n\n트럭 뒤편은 진흙과 피로 질척였다. 먼저 끌려온 사람들이 엎드려 있었다. 뒤통수마다 같은 크기의 구멍. 군인이 무릎을 꿇리고, 총구가 머리에 닿았다. 차가웠다.\n\n「물린 거 아니에요. 긁힌 거예요. 저 간호사예요.」 방독면 너머에서 숨소리 하나 변하지 않았다. 줄은 아무 일 없다는 듯 한 칸 앞으로 갔다.';
 D.turned.t='팔의 상처가 더 이상 아프지 않았다. 열도 없었다. 괜찮은 줄 알았다.\n\n밤사이 체온이 떨어졌다. 손톱 밑이 보라색으로 변했다. 입안에 쇠 맛이 고였다. 배가 고팠다. 미친 듯이. 옆에서 자는 사람의 목덜미에서 맥박이 뛰는 게 보였다. 소리까지 들렸다.\n\n마지막으로 남은 생각은, 누구에게도 들키지 않았다는 안도였다. 그 생각도 곧 배고픔에 먹혔다.';
-D.timeout.t='고르지 못했다. 손가락이 떨리는 동안 20초가 지나갔다.\n\n망설임은 선택이 아니라 공백이었다. 그 공백 속으로 놈들이 들어왔다. 첫 번째 이빨이 손가락을 물었을 때, 그제야 몸이 움직였다. 너무 늦게.\n\n세상은 기다려 주지 않는다. 놈들은 더더욱.';
+D.timeout.t='고르지 못했다. 손가락이 떨리는 동안 12초가 지나갔다.\n\n망설임은 선택이 아니라 공백이었다. 그 공백 속으로 놈들이 들어왔다. 첫 번째 이빨이 손가락을 물었을 때, 그제야 몸이 움직였다. 너무 늦게.\n\n세상은 기다려 주지 않는다. 놈들은 더더욱.';
 D.executed.t='무릎이 꿇려졌다. 「사장」은 바쁜 사람처럼 손목시계를 보았다. 「본보기야. 다들 잘 봐.」\n\n쇠파이프가 먼저 무릎을 부쉈다. 넘어지자 두 번째가 어깨를. 사람들 앞에서, 천천히. 세 번째부터는 세지 않았다. 귀에서 무언가 흘러나왔다. 따뜻했다.\n\n마지막으로 본 것은 냉장실 문 위의 숫자였다. 그 아래, 여자들이 눈을 감지 못하고 있었다.';
 D.captive.t='트럭이 멈춘 곳은 더 깊은 창고였다. 물은 이틀에 한 번, 빵은 사흘에 한 번. 그러다 끊겼다.\n\n쇠사슬에 쓸린 발목이 곪아 구더기가 생겼다. 처음엔 털어 냈다. 나중엔 그럴 힘도 없었다. 옆 매트리스의 여자는 닷새째 움직이지 않았고, 냄새가 났다. 아무도 치우러 오지 않았다.\n\n벽에 손톱으로 날짜를 그었다. 열넷까지. 열다섯째 줄은 반쯤 긋다 멈췄다.';
 D.shelterKilled.t='하역장 셔터가 내려갔다. 당신을 사이에 두고.\n\n첫 번째 쇠파이프가 팔을 부러뜨렸다. 막으려고 든 팔이었다. 두 번째는 관자놀이. 세상이 옆으로 기울었다. 콘크리트 바닥에 얼굴이 닿았고, 입안에서 이가 굴렀다. 위에서 숨을 몰아쉬는 소리. 사람의 숨소리였다.\n\n다음 날 배급표에서 당신 이름이 지워졌다. 누군가 당신 몫의 통조림을 받았다. 맛있게 먹었다.';
@@ -4553,7 +4583,7 @@ function tagChoices(){const sc=S[st.scene];if(!sc)return;const cs=choiceList(sc)
 /* ===== 빠른 진행 ===== */
 const FAST_K='gz_fast_v1';let FAST=!!LS.get(FAST_K,false);
 function foldStory(){const story=app.querySelector('.story');if(!story)return;const ps=[...story.querySelectorAll(':scope > p')].filter(p=>!p.classList.contains('me'));
- if(ps.length<2)return;const keep=ps[ps.length-1];const hid=ps.filter(p=>p!==keep);hid.forEach(p=>p.hidden=true);
+ if(ps.length<2)return;const keep=ps[ps.length-1];const hid=ps.filter(p=>p!==keep&&!p.classList.contains('sfx')&&!p.classList.contains('dl')&&!p.classList.contains('em'));if(!hid.length)return;hid.forEach(p=>p.hidden=true);
  const bt=document.createElement('button');bt.className='fold';bt.type='button';bt.textContent=`전체 보기 · ${hid.length}문단`;
  story.insertBefore(bt,hid[0]);bt.onclick=()=>{hid.forEach(p=>p.hidden=false);bt.remove()}}
 
@@ -4571,6 +4601,111 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.me
 {const _m=openMenu;openMenu=function(){_m();const m=document.querySelector('.ov .menu');if(!m||screen!=='scene')return;
   const b=document.createElement('button');b.className='btn ghost fastb';const lab=()=>`빠른 진행 · ${FAST?'켜짐':'꺼짐'}`;b.innerHTML=`<span>${lab()}</span><small>긴 글을 접고 핵심 문단만 보여 준다</small>`;
   b.onclick=()=>{FAST=!FAST;LS.set(FAST_K,FAST);b.querySelector('span').textContent=lab();closeOv();render(st.sec,S[st.scene])};m.insertBefore(b,m.children[1]||null)}}
+
+/* ===== 26: 글씨 구분 (묘사 · 대사 · 효과음) + 선택지 행동/대사 ===== */
+/* 「」 → “ ” (겹친 따옴표는 안쪽 ‘ ’) */
+const isLabel=x=>x.length<=12&&!/[.?!…,~—]/.test(x)&&!/[「」]/.test(x);
+function dqHTML(s,wrap){s=String(s);let out='',d=0,buf='',inner='';
+ for(const ch of s){if(ch==='「'){if(d===0){out+=esc(buf);buf='';inner=''}else inner+='‘';d++}
+  else if(ch==='」'&&d>0){d--;if(d===0){out+=isLabel(inner)?esc('「'+inner+'」'):(wrap?'<q class="dq">“'+esc(inner)+'”</q>':esc('“'+inner+'”'))}else inner+='’'}
+  else if(d>0)inner+=ch;else buf+=ch}
+ if(d>0)out+=esc('「'+inner);out+=esc(buf);return out}
+function isDlg(p){if(p[0]!=='「'||p[p.length-1]!=='」')return false;let d=0;for(let i=0;i<p.length;i++){const c=p[i];if(c==='「')d++;else if(c==='」'){d--;if(d===0&&i<p.length-1)return false}}return d===0}
+const dqText=s=>{const t=document.createElement('span');t.innerHTML=dqHTML(s,false);return t.textContent};
+function paraHTML(p){let h=dqHTML(p,true).replace(/\{([^}]+)\}/g,'<span class="sfx in">$1</span>');
+ /* 대사는 줄을 바꿔 시작하고, 대사 뒤 묘사도 다음 줄에서 (「…」라고 말했다 처럼 붙은 꼬리는 같은 줄) */
+ h=h.replace(/<q class="dq">([^<]*)<\/q>((?:\s?(?:하며|하고|하는|하자|하더니|하곤|라고|라며|라는|란|이라고|이라며|고|며)(?=[\s가-힣])[^.!?…<]*[.!?…]?)?)/g,(m,q,tail)=>`<span class="dqb"><q class="dq">${q}</q>${tail||''}</span>`);
+ h=h.replace(/\s*(<span class="dqb">)/g,'$1').replace(/(<\/span>)\s+/g,'$1');
+ return h}
+textHTML=function(t){if(typeof t==='function')t=t(st);t=josa(t);return t.split(/\n\n+/).map(p=>{
+ if(/^\{[^{}]+\}$/.test(p))return `<p class="sfx">${esc(p.slice(1,-1))}</p>`;
+ if(p.startsWith('!'))return `<p class="em">${paraHTML(p.slice(1))}</p>`;
+ if(isDlg(p))return `<p class="dl">${dqHTML(p,false)}</p>`;
+ return `<p class="nar">${paraHTML(p)}</p>`}).join('')};
+
+/* ===== 효과음 ===== */
+function addSfx(id,sfx,at){const sc=S[id];if(!sc)return;const o=sc.text;
+ const ins=t=>{const ps=String(t).split(/\n\n+/);const i=at==='end'?ps.length:Math.min(at,ps.length);ps.splice(i,0,'{'+sfx+'}');return ps.join('\n\n')};
+ sc.text=typeof o==='function'?(s=>ins(o(s))):ins(o);
+ if(typeof PAGE!=='undefined'&&PAGE[id]&&typeof at==='number'&&at<PAGE[id][0])PAGE[id]=[PAGE[id][0]+1,PAGE[id][1]]}
+if(typeof S.e_signal.text==='string')S.e_signal.text=S.e_signal.text.replace('민간인이 듣는다.」 지지직.','민간인이 듣는다.」');
+[['y_start','삐이이이—',1],['th_men','쾅! 쾅! 쾅!',0],['th_break','콰직!',0],['y_amb_siege','쿵 쿵 쿵 쿵',1],['y_roof_wait','쿵, 쿵.',1],
+ ['m_raid','콰앙!',0],['m_siege','쾅. 쾅. 쾅.',0],['m_horde','쿵. 쿵.','end'],['m_army','쾅쾅쾅!',0],
+ ['e_signal','지지직—','end'],['e_heli_arrive','타타타타타타—',1],['e_heli_breach','콰직!',0],['e_bitten','콰득.',1],['e_home2','쿵… 쿵…','end'],['e_stay3','끼이이익—','end'],
+ ['ev_knock','똑. 똑. 똑.',0],['ev_drunk','철컥.',1],['ev_lurker','바스락.',0],
+ ['ss_purge','탕!',1],['ss_flood','콸콸콸—',0],['ss_birth_ok','응애—',0],['ss_stay3','삐—— 지직.',0],['se_escal','끼기기긱—',0],['se_train','스윽… 스윽…',1],['se_knock','똑, 똑.',0],
+ ['dg_breach','끼이이익—',0],['dg_noise','치지직—',0],['dg_collapse','우르르 쾅!',0],['dg_turned','뿌드득. 뿌드득.',1],
+ ['ch_bell_ring','댕— 댕— 댕—',0],['ch_bell_siege','철컹! 철컹!',1],['ch_crypt','찰그랑… 찰그랑…',1],['ch_fire','콰앙!',0],['ch_horde','사각 사각 사각…',0],['ch_stay_bell','댕— 댕— 댕— 댕—',0],['ch_bridge_out','댕—','end'],
+ ['g_center','덜컹 덜컹 덜컹',1],['g_night','똑. 똑. 똑.',1],['g_jbridge','삐— 지직.',0]
+].forEach(a=>addSfx(...a));
+
+/* ===== 선택지: 행동은 위 작은 글씨, 대사는 크게 ===== */
+const CHSAY={
+ 'y_checkpoint|간호사 사원증을 내밀며 「긁힌 상처」라고 말한다':['간호사 사원증을 내민다','「긁힌 상처예요.」'],
+ 'th_men|「남편이 곧 와요」라고 거짓말한다':['문 너머로 거짓말한다','「남편이 곧 와요.」'],
+ 'y_mart_gate|「여자가 검사해 주세요」라고 요구한다':['물러서지 않고 요구한다','「여자가 검사해 주세요.」'],
+ 'k_final|수정을 가리키며 「저 여자가 도망치려 했다」고 말한다':['수정을 가리킨다','「저 여자가 도망치려 했어요.」'],
+ 'e_apt1|「1803호. 내 딸이 거기 살아요.」 바리케이드 앞에 선다':['바리케이드 앞에 선다','「1803호. 내 딸이 거기 살아요.」'],
+ 'e_apt1|강혁이 앞에 선다 — 「18층 1803호. 내 딸이 있어요.」':['강혁이 앞에 선다','「18층 1803호. 내 딸이 있어요.」'],
+ 'm_army|간호사 사원증을 내밀고 「부상자부터 치료하겠다」며 시간을 끈다':['사원증을 내밀고 시간을 끈다','「부상자부터 치료하겠습니다.」'],
+ 'ss_birth|「나는 못 해요」 — 칸을 나온다':['칸을 나온다','「나는 못 해요.」'],
+ 'us_crush|「멈춰!」 소리치며 아래로 사람들을 밀어낸다':['아래로 사람들을 밀어내며','「멈춰!」'],
+ 'ch_gate|「아녜스입니다」 — 세례명을 꾸며 댄다':['세례명을 꾸며 댄다','「아녜스입니다.」'],
+ 'ch_gate|「신자 아닙니다」 사실대로 말한다':['사실대로 말한다','「신자 아닙니다.」'],
+ 'ce_mass|박 회장에게 「심판이면 간호사는 왜 필요하냐」고 묻는다':['박 회장을 똑바로 본다','「심판이면 간호사는 왜 필요한가요?」'],
+ 'ch_fever|「놈들 병이 아니다」 — 사람들 앞에서 진단을 밝히고 막아선다':['사람들 앞을 막아선다','「놈들 병이 아니에요. 독감이에요.」'],
+ 'ss_tun_south|남자에게 「다리를 막은 건 우리가 아니다」라고 말한다':['남자를 마주 본다','「다리를 막은 건 우리가 아니에요.」'],
+ 'dg_requis|「배급은 공평해야죠.」 칸 사람들 앞에서 맞선다':['칸 사람들 앞에서 맞선다','「배급은 공평해야죠.」'],
+ 'k13|「지금 가면 죽어요.」 붙잡는다':['팔을 붙잡는다','「지금 가면 죽어요.」'],
+ 'g_1803|현관문에 「아빠 왔다 감」 적고 옥상으로 뛴다':['현관문에 적고 옥상으로 뛴다','「아빠 왔다 감」'],
+ 'g_roof_k|하은만 태워 보낸다 — 「엄마 찾아서 갈게.」':['하은만 태워 보낸다','「엄마 찾아서 갈게.」'],
+ 'y_checkpoint|손목의 「검역 통과」 띠를 보여 준다':null};
+for(const [k,v] of Object.entries(CHSAY)){if(!v)continue;const [id,t]=k.split('|');const sc=S[id];if(!sc||!Array.isArray(sc.choices))continue;const c=sc.choices.find(x=>x.t===t);if(c){c.act=v[0];c.say=v[1]}}
+function choiceDeco(sel){const sc=S[st.scene];if(!sc)return;const cs=choiceList(sc);
+ const bs=[...app.querySelectorAll(sel)].filter(b=>!b.classList.contains('me-btn'));
+ bs.forEach((b,i)=>{const c=cs[i];if(!c)return;const sp=b.querySelector(':scope > span:not(.meta):not(.why)');if(!sp||sp.dataset.dq)return;sp.dataset.dq=1;
+  const tail=[...sp.querySelectorAll('.ctg')];
+  if(c.act&&c.say){sp.innerHTML=`<small class="act">${esc(josa(c.act))}</small><b class="say">${dqHTML(josa(c.say),false)}</b>`}
+  else if(sp.firstChild&&sp.firstChild.nodeType===3&&/[「」]/.test(sp.firstChild.nodeValue)){const v=sp.firstChild.nodeValue;if(isDlg(v)){sp.firstChild.remove();sp.insertAdjacentHTML('afterbegin',`<b class="say">${dqHTML(v,false)}</b>`)}else sp.firstChild.nodeValue=dqText(v)}
+  tail.forEach(x=>sp.appendChild(x))})}
+{const _p=paginate;paginate=function(){choiceDeco('.choices .ch-btn');const ban=app.querySelector('.story > .banner');if(ban&&/[「」]/.test(ban.textContent))ban.textContent=dqText(ban.textContent);return _p()}}
+{const _u=showUrgent;showUrgent=function(...a){const r=_u(...a);try{choiceDeco('.choices .u-btn')}catch(e){}return r}}
+
+/* ===== 27: 체력·정신력 하향 · 아이템 소폭 감소 · 가방 획득처 ===== */
+Object.assign(BED.cozy,{hp:3,hp2:5,men:2});Object.assign(BED.normal,{hp:2,hp2:3});Object.assign(BED.rough,{hp:0,hp2:1});
+Object.assign(CHARS.seoyun,{hp:62,men:62});Object.assign(CHARS.kang,{hp:78,men:58});
+
+const BAL={men:.8,hp:.7};
+function balEff(e){if(!e||typeof e!=='object')return;
+ if(e.men>0)e.men=Math.max(1,Math.round(e.men*BAL.men));if(e.hp>0)e.hp=Math.max(1,Math.round(e.hp*BAL.hp));
+ if(Array.isArray(e.give)&&e.give.length>=2){const g=e.give.slice();const food=['can','water'];let cut=-1;
+  for(let i=g.length-1;i>=0;i--){if(food.includes(g[i])&&g.indexOf(g[i])!==i){cut=i;break}}
+  if(cut<0&&g.length>=3)cut=g.length-1;if(cut>=0){g.splice(cut,1);e.give=g.length===1?g[0]:g}}}
+for(const sc of Object.values(S)){if(!Array.isArray(sc.choices))continue;sc.choices.forEach(c=>{if(!c)return;balEff(c.eff);balEff(c.okEff);balEff(c.failEff)})}
+{const _pp=probParts;probParts=function(c){const r=_pp(c);const add=[];
+ if(c.phys!==false){if(st.hp>=30&&st.hp<40)add.push(['지침',-6])}else{if(st.men>=25&&st.men<40)add.push(['불안',-5])}
+ if(!add.length)return r;r.parts=r.parts.concat(add);r.raw+=add.reduce((a,p)=>a+p[1],0);r.p=clamp(Math.round(r.raw),5,95);if(c.lethal&&r.p<50){r.p=50;r.floor=1}return r}}
+/* 가방 획득처 */
+S.y_station.choices.splice(3,0,{t:'처치실 벽의 응급 허리 파우치를 찬다',once:'pouch',group:'st',to:'y_station',eff:{bag:'waist'},adv:2});
+S.m_d3.choices.push({t:'직원 탈의실 사물함을 뒤져 가방을 찾는다',once:'mbag',p:70,ok:'ev_A',okEff:{bag:'backpack',fn:s=>{s.banner={t:'사물함 맨 아래 칸에 누군가의 등산용 백팩. 이름표는 떼어져 있다.'}}},fail:'ev_A',failEff:{hp:-10,fn:s=>{s.banner={t:'탈의실 구석에 무언가 웅크리고 있었다. 팔을 긁히고 문을 닫았다.',bad:1}}},adv:40});
+S.ss_d3.choices.push({t:'역무실 분실물 보관함에서 가방을 찾아본다',once:'sbag',if:s=>alive('성 대리'),to:'ss_evA',eff:{bag:'waist',hum:-2,fn:s=>{s.banner={t:'성 대리가 열쇠를 건넸다. 「주인이 찾으러 올 일은 없겠죠.」 허리가방 하나.'}}},adv:20});
+S.ch_d3.choices.push({t:'바자회 물품 창고에서 쓸 만한 가방을 고른다',once:'cbag',to:'ch_evA',eff:{bag:'backpack',fn:s=>{s.banner={t:'데레사 수녀가 먼지 쌓인 백팩을 털어 주었다. 「바자회에서 이천 원 하던 거예요.」'}}},adv:30});
+{const c=S.hid_mil.choices[1];c.t='밖에 쌓인 보급 상자를 군용 배낭째 챙긴다';c.eff=Object.assign({},c.eff,{bag:'hiking'})}
+{const c=S.g_office.choices[0];c.t='구급함과 배송 지도, 기사용 허리가방을 챙긴다';c.eff=Object.assign({},c.eff,{bag:'waist'})}
+
+DGCH=.65;
+Object.assign(ZD,{b0:1.5,b:7,s:12});
+/* 든든함 기준을 낮춘 수치에 맞춤 (hp≥70 → 60, res≥60 → 55) */
+{const _pp=probParts;probParts=function(c){const r=_pp(c);if(c.phys!==false&&st.hp>=60&&st.hp<70&&st.res>=55&&!r.parts.some(p=>p[0]==='든든함')){r.parts=r.parts.concat([['든든함',8]]);r.raw+=8;r.p=clamp(Math.round(r.raw),5,95);if(c.lethal&&r.p<50){r.p=50;r.floor=1}}return r}}
+/* 가방 획득처 추가 (남쪽 길) */
+{const c=S.e_highway.choices.find(x=>x.once==='hwloot');if(c){c.t='버려진 차들에서 연료와 물, 트렁크의 가방을 모은다';c.okEff=Object.assign({},c.okEff||{},{bag:'backpack'})}}
+{const c=S.e_village.choices.find(x=>x.once==='vtruck');if(c)c.p=65}
+const gearC=to=>({t:'약탈당한 아웃도어 매장에서 배낭을 찾는다',once:'gear',to,eff:{bag:'hiking',res:-5,fn:s=>{s.banner={t:'마네킹이 메고 있던 등산 배낭. 매장을 다 뒤지느라 반나절이 갔다. 끈을 조이자 어깨가 든든하다.'}}},adv:150});
+S.ss_tun_out.choices.unshift(gearC('e_mount'));S.ch_bridge_out.choices.unshift(gearC('e_mount'));
+/* 떠날 채비 = 배낭 */
+{const c=S.ss_d13.choices.find(x=>x.eff&&x.eff.flag&&x.eff.flag.prep==='leave');if(c){c.eff=Object.assign({},c.eff,{bag:'backpack'})}}
+{const c=S.ch_d13.choices.find(x=>x.eff&&x.eff.flag&&x.eff.flag.prep==='leave');if(c){c.eff=Object.assign({},c.eff,{bag:'backpack'})}}
+S.m_ashes.choices.push({t:'타다 남은 2층 매장에서 쓸 만한 가방을 건진다',to:'m_d13',eff:{bag:'backpack',hp:-4,fn:s=>{s.banner={t:'그을린 진열대 아래 비닐에 싸인 백팩 하나. 연기를 마시며 끌어냈다. 냄새는 나도 멀쩡하다.'}}},adv:50});
 
 titleScreen();
 
