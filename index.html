@@ -94,6 +94,7 @@ button{font-family:inherit;cursor:pointer}
 .story p{margin:0;font-size:16px;line-height:1.85;word-break:keep-all}
 .story p.em{font-weight:700}
 .mevs{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--ink2)}.mevs b{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--red);color:var(--bg);font-size:10px;margin-right:4px}
+.who .wdt{font-size:.62em;margin-left:8px;white-space:nowrap;opacity:.85;font-family:inherit}
 .nomap{display:flex;flex-direction:column;gap:6px;padding:4px 2px}.nomap .nm-h{font-size:18px;color:var(--muted);margin-top:6px}.nomap .nm-l{font-size:22px;line-height:1.35;color:var(--ink)}
 .story p.me{font-family:'Noto Serif KR',serif;font-style:normal;font-weight:700;color:var(--ink2);padding-left:10px;border-left:2px solid var(--line)}
 .me-btn{border:1px dashed var(--line);background:transparent}
@@ -3821,6 +3822,36 @@ const PREPM={leave:'채비',stay:'지킴'};
  if(v){r.parts=r.parts.concat([[l,v]]);r.raw+=v;r.p=clamp(Math.round(r.raw),5,95);if(c.lethal&&r.p<50)r.p=50}return r}}
 for(const id of ['ss_leave','ch_leave']){const sc=S[id];sc.choices.forEach(c=>{if(c.t==='남는다'){c.eff=Object.assign({},c.eff,{fn:s=>{if(prep()==='stay')eff({men:8,hum:3});else if(prep()==='leave'){eff({men:-8});s.banner={t:'꾸려 둔 배낭을 다시 풀었다. 떠나는 사람들이 당신을 한 번씩 돌아봤다.',bad:1}}}})}
  else if(c.to!==id&&!/다은/.test(typeof c.t==='string'?c.t:'')){const e0=c.eff;c.eff=Object.assign({},e0,{fn:s=>{if(e0&&e0.fn)e0.fn(s);if(prep()==='stay'){eff({men:-8});s.banner={t:'밤새 같이 물을 퍼낸 사람들이 입구에 서서 보고 있었다. 아무도 붙잡지 않았다.',bad:1}}}})}})}
+
+/* ===== v21 · 날짜 · 젖은 옷과 저체온 ===== */
+/* 날짜: 1일째 = 11월 14일 */
+const DAY0={m:11,d:14};
+function dateOf(n){let m=DAY0.m,d=DAY0.d+n-1;const len={11:30,12:31,1:31};while(d>len[m]){d-=len[m];m=m===12?1:m+1}return m+'월 '+d+'일'}
+{const _h=headHTML;headHTML=function(sec){const h=_h(sec);const c=CHARS[st.ch];const n=Math.floor(sec/86400)+1;return h.replace(`<span class="who pen">${esc(c.who)}</span>`,`<span class="who pen">${esc(c.who)}<span class="wdt">${dateOf(n)}</span></span>`)}}
+{const _r=recHTML;recHTML=function(cause){const h=_r(cause);const n=day();return h.replace(/<dt>생존<\/dt><dd>([^<]*)<\/dd>/,`<dt>날짜</dt><dd>${dateOf(1)} — ${dateOf(n)}</dd><dt>생존</dt><dd>${n}일 · $1</dd>`)}}
+
+/* 젖은 옷: 물을 건너면 젖고, 불·실내 잠·은신처에서 마른다 */
+const WETMSG='옷이 젖었다 — 추위에 약해진다';
+function getWet(){if(!sOn('wet')){sAdd('wet');st.wetT=st.sec;toastQ(WETMSG)}}
+function dryOff(msg){if(sOn('wet')){sDel('wet');if(msg)toastQ(msg)}}
+{const e0=S.ss_tun2.enter;S.ss_tun2.enter=s=>{getWet();return e0?e0(s):undefined}}
+for(const id of ['ss_tun1_late','ss_stay_hide']){const e0=S[id].enter;S[id].enter=s=>{getWet();return e0?e0(s):undefined}}
+for(const i of [1,2]){const c=S.e_bridge.choices[i];if(!c)continue;for(const k of ['okEff','failEff','eff']){const e0=c[k];if(e0===undefined&&k==='eff')continue;c[k]=typeof e0==='function'?(s=>{e0(s);getWet()}):Object.assign({},e0,{fn:s=>{if(e0&&e0.fn)e0.fn(s);getWet()}})}}
+{const c=S.e_mount.choices[0];const e0=c.okEff;c.okEff=typeof e0==='function'?(s=>{e0(s);dryOff('불 옆에서 옷을 말렸다')}):Object.assign({},e0,{fn:s=>{if(e0&&e0.fn)e0.fn(s);dryOff('불 옆에서 옷을 말렸다')}})}
+S.e_mount.choices.forEach((c,i)=>{if(i===0)return;c.mods=(c.mods||[]).concat([[s=>sOn('wet'),-10,'젖은 옷']])});
+{const t0=S.e_mount.text;S.e_mount.text=s=>{const t=typeof t0==='function'?t0(s):t0;return sOn('wet')?t:t.replace('젖은 옷이 몸에 붙는다.','땀에 젖은 속옷이 식어 간다.')}}
+/* 은신처·실내 잠·12시간이 지나면 마른다 */
+{const _adv=advance;advance=function(to,skip){_adv(to,skip);if(st&&sOn('wet')){if(F('sheltered')||st.sec-(st.wetT||0)>=12*3600)dryOff()}}}
+{const _sc=sleepCheck;sleepCheck=function(from,to,skip){const q=nightsIn(from,to)?sleepQ():null;_sc(from,to,skip);if(q&&(q==='cozy'||q==='normal'))dryOff()}}
+/* 밤 추위: 젖은 채로 밤을 지나면 정신력·체력이 더 깎인다 */
+{const _sc=sleepCheck;sleepCheck=function(from,to,skip){const n=nightsIn(from,to);const w=sOn('wet');_sc(from,to,skip);if(n&&w&&sOn('wet')){st.hp-=4;st.men-=4*menF();st.lastCause='hypothermia';toastQ('젖은 옷으로 밤을 났다 — 체력 −4')}}}
+/* 상태 표시 */
+{const _sh=statHTML;statHTML=function(){let h=_sh();if(sOn('wet'))h=h.replace('<span class="tag ">이상 없음</span>','').replace('<div class="tags">','<div class="tags"><span class="tag bad">젖은 옷 · 추위 판정 −10%</span>');return h}}
+{const _os=openStats;openStats=function(){_os();if(!sOn('wet'))return;const sx=document.querySelector('.sheet .sx');if(!sx)return;let ul=sx.querySelector('.sx-l');if(!ul){ul=document.createElement('ul');ul.className='sx-l';const sub=sx.querySelector('.sub');sx.insertBefore(ul,sub);if(sub&&/특별한 것 없음/.test(sub.textContent))sub.remove()}const li=document.createElement('li');li.className='bad';li.textContent='젖은 옷 — 추위·저체온 판정 −10%, 젖은 채 밤을 나면 체력 −4. 불을 피우거나 실내에서 자면 마른다';ul.appendChild(li)}}
+
+/* 저체온 사망 글: 영하가 아니어도 죽는 이유 */
+D.hypothermia.h='젖은 옷, 바람, 빈속. 산의 밤은 놈들보다 조용히 죽인다.';
+D.hypothermia.t='영하는 아니었다. 그래도 젖은 옷이 바람을 그대로 통과시켰다. 빈속이 만들어 낼 열은 처음부터 없었다.\n\n떨림이 멈췄을 때 따뜻하다고 느꼈다. 중심 체온 32도 아래. 간호사인 당신은 그게 무슨 뜻인지 알았다.\n\n손가락은 하얗게 굳어 갔다. 감각이 없어서 아프지도 않았다. 이상하게 덥다는 생각이 들어 외투를 벗었다. 그것도 증상이라는 걸 알면서. 알면서도 벗었다.\n\n아침 서리가 속눈썹 위에 내려앉았다.';
 
 titleScreen();
 
