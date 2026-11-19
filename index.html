@@ -430,6 +430,14 @@ html[data-fs=l] .story p{font-size:17px!important}html[data-fs=l] .story p.dl{fo
 .tag.bad{background:none;color:var(--redtx)}
 #app.scn .tags{gap:2px 12px}
 .ctg i.l{background:none}
+
+/* v28b · 판정 글씨색 */
+.ctg .pc{font-variant-numeric:tabular-nums;transition:color .12s}
+.ch-btn.rolling .ctg .pc{color:var(--ink);background:none!important}
+.ch-btn.rolling .ctg .pc::before{content:none}
+.ch-btn.rolling .ctg .pc.ok{color:var(--ok,#2f6b3a);font-weight:700}
+.ch-btn.rolling .ctg .pc.ng{color:var(--red);font-weight:700}
+[data-theme=dark]{--ok:#7cc48a}
 </style>
 </head>
 <body>
@@ -5487,6 +5495,13 @@ function splitPara(p){
 setSky=function(sec){const el=$('#sky');if(!el)return;const k=skyAt(sec);
   el.style.background=`rgba(10,12,28,${(k.v*.22).toFixed(3)})`;el.classList.add('on');
   const b=$('.skyband');if(b)b.style.background=k.band};
+
+/* 확률 판정: 글씨색만 — 굴러갈 땐 잉크색 숫자, 결과는 성공 잉크·실패 빨강 */
+choose=function(c,btn){if(busy)return;busy=true;const at=st.sec,isU=screen==='urgent';
+ const finish=(ok,pc)=>applyChoice(c,ok,pc,at,isU);
+ if(c.p!=null){const pc=prob(c);const ok=Math.random()*100<pc;const tag=btn&&btn.querySelector('.pc');btn&&btn.classList.add('rolling');let n=0;
+  const iv=setInterval(()=>{if(tag)tag.textContent=Math.floor(Math.random()*100)+'%';if(++n>9){clearInterval(iv);if(tag){tag.textContent=ok?'성공':'실패';tag.classList.add(ok?'ok':'ng')}setTimeout(()=>finish(ok,pc),450)}},60)}
+ else finish()};
 
 titleScreen();
 
