@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>감염 구역</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@500;700;900&family=Nanum+Pen+Script&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Pen+Script&display=swap">
 <style>
 :root,[data-theme=light]{
   --page:#cfc6b2;--bg:#e6dcc6;--panel:#dcd0b6;--btn:#d9ccb1;--btnh:#cfc1a4;--ink:#2a241e;--ink2:#4a4038;--muted:#5e5449;
@@ -384,6 +384,52 @@ p.sfx{font-size:27px!important}
  #app.scn .sitbox.quiet{display:none}
  .toast{top:auto;bottom:92px;font-size:13px;padding:8px 14px;pointer-events:none}
 }
+
+/* ===== v27 · 가독성 ===== */
+html:not([data-font=serif]) .story p,html:not([data-font=serif]) .ch-btn,html:not([data-font=serif]) .u-btn,html:not([data-font=serif]) .u-txt,html:not([data-font=serif]) .sitbox,html:not([data-font=serif]) .loc,html:not([data-font=serif]) .banner{font-family:'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif}
+html:not([data-font=serif]) .story p.nar{font-weight:400;letter-spacing:-.005em;color:var(--ink)}
+html[data-font=serif] .story p.nar{color:var(--ink2)}
+.story p.dl{padding:0;border-left:none}
+.story{gap:18px}
+.story.tight{gap:14px}
+.memo{font-size:20px}
+.memo.red{opacity:.85}
+/* 선택지 정보 한 줄 */
+.ctg{gap:2px 10px;margin-top:5px}
+.ctg i,.ctg .pc,.ctg .tm,.ctg .ctag{font-style:normal;background:none!important;box-shadow:none!important;padding:0!important;border-radius:0;font-size:12px;line-height:1.4;color:var(--muted);font-weight:400;white-space:nowrap}
+.ctg .pc::before{content:'성공 '}
+.ctg .pc.lo,.ctg i.l,.ctg .ctag{color:var(--redtx)}
+.ctg .ctag{align-self:auto}.ctg .ctag.w{color:var(--ink2)}
+/* 읽기 설정 */
+.rdset{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:10px;background:var(--panel);margin-bottom:4px}
+.rdrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}
+.rdseg{display:flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+.rdseg button{border:none;background:none;color:var(--ink);font-size:13px;padding:6px 12px}
+.rdseg button.on{background:var(--ink);color:var(--bg);font-weight:700}
+/* 글자 크기 */
+html[data-fs=s] .story p{font-size:15px!important}html[data-fs=s] .story p.dl{font-size:14.5px!important}html[data-fs=s] .ch-btn{font-size:14.5px!important}
+html[data-fs=l] .story p{font-size:18.5px!important}html[data-fs=l] .story p.dl{font-size:18px!important}html[data-fs=l] .ch-btn{font-size:17px!important}
+html[data-fs] .story p.sfx{font-size:27px!important}
+@media (min-width:1024px){html[data-fs=s] #app.scn .story p{font-size:16px!important}html[data-fs=l] #app.scn .story p{font-size:20px!important}}
+
+/* ===== v28 · 명조 복귀 · 크기 축소 · 면 정리 ===== */
+.story p{font-size:15.5px}
+.story p.dl{font-size:15px}
+.ch-btn{font-size:14.5px}
+html[data-fs=s] .story p{font-size:14.5px!important}html[data-fs=s] .story p.dl{font-size:14px!important}html[data-fs=s] .ch-btn{font-size:13.5px!important}
+html[data-fs=l] .story p{font-size:17px!important}html[data-fs=l] .story p.dl{font-size:16.5px!important}html[data-fs=l] .ch-btn{font-size:15.5px!important}
+@media (min-width:1024px){#app.scn .story p{font-size:16px}#app.scn .ch-btn{font-size:15px}
+ html[data-fs=s] #app.scn .story p{font-size:15px!important}html[data-fs=l] #app.scn .story p{font-size:18px!important}}
+.ch-btn{background:transparent;border:1px solid var(--line2)}
+.ch-btn:not([disabled]):active{background:var(--panel)}
+@media (hover:hover){.ch-btn:not([disabled]):hover{background:var(--panel)}}
+.ch-btn[disabled]{border:1px solid var(--line);opacity:.75}
+.sitbox{background:transparent;border-left-width:2px;padding:4px 0 4px 12px;border-radius:0}
+.sitbox.cr{background:transparent}
+.tag{background:none;padding:0!important;color:var(--muted)}
+.tag.bad{background:none;color:var(--redtx)}
+#app.scn .tags{gap:2px 12px}
+.ctg i.l{background:none}
 </style>
 </head>
 <body>
@@ -5400,6 +5446,47 @@ let SIT_CHAP=null,SIT_SCENE=null;
   const d=document.createElement('div');d.className='sitbox';d.style.marginBottom='6px';
   d.innerHTML=`<span class="gl">${esc(kt(CHNUM[st.chap||1]+' '+(st.chapT||'')))}</span><span class="sit">목표: ${esc(kt(goalOf()))}</span>`+(s?`<span class="gl" style="margin-top:2px">${esc(kt(s))}</span>`:'');
   m.insertBefore(d,m.firstChild)}}
+
+/* ===== 35: 가독성 — 고딕 본문 · 문단 나누기 · 선택지 정보 한 줄 · 읽기 설정 ===== */
+const RD_K='gz_read_v1';
+let RD=Object.assign({font:'serif',fs:'m'},LS.get(RD_K,{}));
+function applyRD(){const h=document.documentElement;h.dataset.font=RD.font;h.dataset.fs=RD.fs}
+applyRD();
+
+/* 긴 서술 문단은 폰에서 문장 경계로 나눈다 (대사·효과음·강조는 그대로) */
+function splitPara(p){
+  if(p.length<120||/[「」{}]/.test(p)||p.startsWith('!'))return [p];
+  const ss=p.split(/(?<=[.?!…]["”’)]?)\s+/).map(x=>x+' ');
+  if(!ss||ss.length<3)return [p];
+  const out=[];let cur='';
+  for(const s of ss){if(cur&&cur.length>=70&&cur.length+s.length>105){out.push(cur.trim());cur=''}cur+=s}
+  if(cur.trim()){if(out.length&&cur.trim().length<28)out[out.length-1]+=' '+cur.trim();else out.push(cur.trim())}
+  return out}
+{const _t=textHTML;textHTML=function(t){if(typeof t==='function')t=t(st);
+  if(typeof window!=='undefined'&&window.innerWidth<1024&&typeof t==='string')t=t.split(/\n\n+/).flatMap(splitPara).join('\n\n');
+  return _t(t)}}
+
+/* 선택지: 확률·시간·위험 표시를 문장 아래 한 줄로 */
+{const _tc=tagChoices;tagChoices=function(){_tc();
+  app.querySelectorAll('.choices .ch-btn').forEach(b=>{const m=b.querySelector(':scope > .meta');if(!m||m.querySelector('.nx'))return;
+    const sp=b.querySelector(':scope > span:not(.meta):not(.why)');if(!sp)return;
+    let g=sp.querySelector('.ctg');if(!g){g=document.createElement('span');g.className='ctg';sp.appendChild(g)}
+    [...m.children].reverse().forEach(x=>g.prepend(x));m.remove()})}}
+
+/* 메뉴: 읽기 설정 */
+{const _m=openMenu;openMenu=function(){_m();const m=document.querySelector('.ov .menu');if(!m)return;
+  const box=document.createElement('div');box.className='rdset';
+  const row=(lab,key,opts)=>`<div class="rdrow"><span>${lab}</span><div class="rdseg">${opts.map(([v,t])=>`<button data-k="${key}" data-v="${v}" class="${RD[key]===v?'on':''}">${t}</button>`).join('')}</div></div>`;
+  box.innerHTML=row('글자 크기','fs',[['s','작게'],['m','보통'],['l','크게']])+row('서체','font',[['sans','고딕'],['serif','명조']]);
+  box.onclick=e=>{const b=e.target.closest('button[data-k]');if(!b)return;RD[b.dataset.k]=b.dataset.v;LS.set(RD_K,RD);applyRD();
+    box.querySelectorAll(`button[data-k="${b.dataset.k}"]`).forEach(x=>x.classList.toggle('on',x===b));
+    if(b.dataset.k==='fs'&&typeof tightFit==='function')try{tightFit()}catch(_){}};
+  const ref=[...m.children].find(x=>x.tagName==='BUTTON');m.insertBefore(box,ref||null)}}
+
+/* 하늘: 가장자리 어둡게·색 덮개 제거 — 시간대 색은 위쪽 띠에만, 밤엔 옅은 어둠만 */
+setSky=function(sec){const el=$('#sky');if(!el)return;const k=skyAt(sec);
+  el.style.background=`rgba(10,12,28,${(k.v*.22).toFixed(3)})`;el.classList.add('on');
+  const b=$('.skyband');if(b)b.style.background=k.band};
 
 titleScreen();
 
