@@ -438,6 +438,22 @@ html[data-fs=l] .story p{font-size:17px!important}html[data-fs=l] .story p.dl{fo
 .ch-btn.rolling .ctg .pc.ok{color:var(--ok,#2f6b3a);font-weight:700}
 .ch-btn.rolling .ctg .pc.ng{color:var(--red);font-weight:700}
 [data-theme=dark]{--ok:#7cc48a}
+
+/* ===== v29 · 성공률 숫자 · 대사·효과음 명조 ===== */
+.ch-btn>span:not(.meta):not(.why){flex:1;min-width:0}
+.ch-btn .meta{margin-left:12px;align-self:center}
+.ch-btn .meta .pc{background:none!important;padding:0;border-radius:0;font-family:inherit;font-size:16px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;min-width:2.6em;text-align:right;color:var(--ink);transition:color .12s}
+.ch-btn .meta .pc.t2{color:var(--muted)}
+.ch-btn .meta .pc.t3{color:var(--red)}
+.ch-btn.rolling .meta .pc{color:var(--ink)}
+.ch-btn.rolling .meta .pc.ok{color:var(--ok,#2f6b3a)}
+.ch-btn.rolling .meta .pc.ng{color:var(--red)}
+.ctg .tm{color:var(--muted)}
+html:not([data-font=sans]) q.dq,html:not([data-font=sans]) .story p.dl,html:not([data-font=sans]) .ch-btn .say,html:not([data-font=sans]) .u-btn .say{font-family:'Noto Serif KR',serif;font-weight:700;letter-spacing:0}
+:root{--sfx:#8f2a22}[data-theme=dark]{--sfx:#d0584f}
+html p.sfx{font-family:'Noto Serif KR',serif!important;font-weight:900!important;font-size:22px!important;letter-spacing:.18em;color:var(--sfx)!important;transform:rotate(-1deg)}
+html span.sfx.in{font-family:'Noto Serif KR',serif;font-weight:900;color:var(--sfx);font-size:1.08em;letter-spacing:.08em}
+html[data-fs] .story p.sfx{font-size:22px!important}
 </style>
 </head>
 <body>
@@ -5474,12 +5490,17 @@ function splitPara(p){
   if(typeof window!=='undefined'&&window.innerWidth<1024&&typeof t==='string')t=t.split(/\n\n+/).flatMap(splitPara).join('\n\n');
   return _t(t)}}
 
-/* 선택지: 확률·시간·위험 표시를 문장 아래 한 줄로 */
+/* 선택지: 성공률은 오른쪽 숫자, 이유·시간·위험은 문장 아래 작은 줄 */
 {const _tc=tagChoices;tagChoices=function(){_tc();
   app.querySelectorAll('.choices .ch-btn').forEach(b=>{const m=b.querySelector(':scope > .meta');if(!m||m.querySelector('.nx'))return;
+    const pc=m.querySelector('.pc');
+    if(pc){const v=parseInt(pc.textContent);pc.classList.remove('lo');pc.classList.add(v>=70?'t1':v>=40?'t2':'t3')}
+    const rest=[...m.children].filter(x=>x!==pc);
+    rest.forEach(x=>{if(x.classList.contains('tm'))x.textContent=x.textContent.replace(/^기본\s*\d+\s*(·\s*)?/,'').trim();if(!x.textContent.trim())x.remove()});
+    const keep=[...m.children].filter(x=>x!==pc);if(!keep.length)return;
     const sp=b.querySelector(':scope > span:not(.meta):not(.why)');if(!sp)return;
     let g=sp.querySelector('.ctg');if(!g){g=document.createElement('span');g.className='ctg';sp.appendChild(g)}
-    [...m.children].reverse().forEach(x=>g.prepend(x));m.remove()})}}
+    keep.reverse().forEach(x=>g.prepend(x))})}}
 
 /* 메뉴: 읽기 설정 */
 {const _m=openMenu;openMenu=function(){_m();const m=document.querySelector('.ov .menu');if(!m)return;
