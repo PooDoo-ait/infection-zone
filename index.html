@@ -5524,6 +5524,105 @@ choose=function(c,btn){if(busy)return;busy=true;const at=st.sec,isU=screen==='ur
   const iv=setInterval(()=>{if(tag)tag.textContent=Math.floor(Math.random()*100)+'%';if(++n>9){clearInterval(iv);if(tag){tag.textContent=ok?'성공':'실패';tag.classList.add(ok?'ok':'ng')}setTimeout(()=>finish(ok,pc),450)}},60)}
  else finish()};
 
+/* ===== 36: 선택지 정리 — 한 화면 최대 4개 ===== */
+
+/* 간호사실: ① 하나만 챙긴다 → ② 숨을 고르고 움직인다 */
+{const sc=S.y_station;
+ sc.choices.forEach(c=>{if(c.group==='st')return;const o=c.if;c.if=o?s=>F('grp_st')&&o(s):()=>F('grp_st')});
+ sc.text=s=>F('grp_st')
+  ?'챙긴 것을 주머니에 쑤셔 넣고 나서야 숨이 쉬어졌다. 그제야 소리가 들린다.\n\n벽걸이 TV 속 앵커가 같은 문장을 되풀이한다. 「서울 전역에 외출 자제가 권고되었습니다. 원인 불명의 집단 폭력 사태가…」 화면 아래로 「한강 교량 통제 예정」 자막이 흘러간다.\n\n'+(F('mom')?'휴대폰 화면에 엄마 번호가 떠 있다. 다시는 연결되지 않는다.':'휴대폰에 엄마의 부재중 전화가 일곱 통 와 있다.')+'\n\n!유리문에 금이 갔다. 더 뒤질 시간이 없다.'
+  :'문을 잠그자마자 유리창 너머로 손바닥이 찍혔다. 하나, 둘. 피 묻은 손자국이 겹겹이 쌓인다.\n\n구급 카트, 수간호사 책상, 처치실 벽의 응급 파우치, 지갑 속 엄마 사진. 유리가 얼마나 버틸지 모른다.\n\n손에 잡히는 건 하나뿐이다.';
+ SUM.y_station=s=>F('grp_st')?'간호사실 · 유리문이 버티는 동안 움직이자':'간호사실에 갇혔다 · 하나만 챙길 수 있다';}
+
+/* ---------- 공통: 하위 화면 만들기 ---------- */
+const subOf=(id,base,text,choices)=>{S[id]={loc:S[base].loc,text,choices};return id};
+const pickC=(id,pred)=>S[id].choices.filter(pred);
+const hideC=c=>{c.if=()=>false};
+const andIf=(c,g)=>{const o=c.if;c.if=o?s=>g(s)&&o(s):g};
+
+/* 간호사실 ②: 엄마 사진은 전화와 함께 */
+{const ph=S.y_station.choices.find(c=>c.once==='photo');hideC(ph);
+ const call=S.y_station.choices.find(c=>c.once==='call');call.t='엄마 사진을 꺼내 쥐고 전화를 건다';call.eff=Object.assign({},call.eff,{give:'photo'});
+ S.y_station.text=(t=>s=>F('grp_st')?t(s):t(s).replace('처치실 벽의 응급 파우치, 지갑 속 엄마 사진.','처치실 벽의 응급 파우치.'))(S.y_station.text);}
+
+/* 오피스텔: 챙길 것은 한 번에 고른다 */
+{const loot=pickC('y_officetel',c=>c.group==='ofc');
+ subOf('y_ofc_loot','y_officetel','주방과 신발장. 둘 다 챙길 시간은 없다.',loot);
+ loot.forEach(c=>{});const L=S.y_officetel.choices.filter(c=>c.group!=='ofc');
+ S.y_officetel.choices=[{t:'챙길 것을 챙긴다',if:()=>!F('grp_ofc'),to:'y_ofc_loot'},...L];}
+
+/* 고해성사: 봉안당 질문이 뜨면 '됐다며 나온다'는 뺀다 */
+andIf(S.ch_confess.choices.find(c=>c.t==='됐다며 나온다'),()=>!F('cryptKnown'));
+
+/* 화재 다음 날: 혼자 옥상은 빼고, 그 회복은 아침에 */
+{const a=S.m_ashes.choices;hideC(a.find(c=>/옥상/.test(c.t)));const b=a.find(c=>/아침/.test(c.t));b.eff=Object.assign({},b.eff,{men:9});}
+
+/* 3일 밤: 지도·가방은 '뒤진다' 한 칸, 그게 있으면 '일찍 잠든다'는 빠진다 */
+for(const [id,lab,txt] of [['ss_d3','역무실을 뒤진다','역무실. 한 계장의 책상과 분실물 보관함.'],['ch_d3','교구 창고를 뒤진다','교구 사무실과 바자회 물품 창고.']]){
+ const cs=S[id].choices;const g=cs.filter(c=>/지도를 (부탁|빌린)/.test(typeof c.t==='function'?c.t.toString():c.t)||/가방/.test(typeof c.t==='string'?c.t:''));
+ const sid=subOf(id+'_room',id,txt,g);
+ const avail=s=>g.some(c=>(!c.if||c.if(s))&&!(c.once&&s.flags['once_'+c.once]));
+ const rest=cs.filter(c=>!g.includes(c));const sleep=rest.find(c=>c.t==='일찍 잠든다');andIf(sleep,s=>!avail(s));
+ rest.splice(rest.indexOf(sleep)+1,0,{t:lab,if:avail,to:sid});S[id].choices=rest;}
+
+/* 13일 밤: 무전기는 한 칸, 터널 질문·종탑은 짐 꾸리기에, 다은이 있으면 잠은 다은 곁에서 */
+for(const id of ['ss_d13','ch_d13']){const cs=S[id].choices;const radio=cs.filter(c=>c.need==='radio');
+ const sid=subOf(id+'_radio',id,'잡음 너머로 무언가 걸린다. 어느 쪽부터 들을까.',radio);
+ const ravail=s=>radio.some(c=>(!c.if||c.if(s))&&!(c.once&&s.flags['once_'+c.once]));
+ let rest=cs.filter(c=>!radio.includes(c));rest.unshift({t:'무전기를 켠다',need:'radio',sp:1,if:ravail,to:sid,adv:5});
+ const pack=rest.find(c=>/짐을 꾸린다/.test(c.t));
+ if(id==='ss_d13'){const tq=rest.find(c=>/하저터널/.test(c.t));hideC(tq);
+  const t0=pack.t,e0=pack.eff;pack.t=s=>alive('성 대리')?'떠날 짐을 꾸리고, 성 대리에게 하저터널 길을 묻는다':t0;
+  pack.eff=Object.assign({},e0,{fn:s=>{if(alive('성 대리')){F('tunnelKnown',1);F('tunnelPrep',1)}}});
+  const dz=rest.find(c=>c.t==='다은 곁에서 잔다');const sl=rest.find(c=>c.t==='잠을 청한다');andIf(sl,s=>!(typeof daeunOK==='function'&&daeunOK()));}
+ else{const tw=rest.find(c=>/종탑/.test(c.t));hideC(tw);
+  const t0=pack.t,e0=pack.eff;const tow=s=>alive('지훈')&&!F('line3');
+  pack.t=s=>tow(s)?'지훈과 종탑에서 3호선 선로를 본 뒤, 떠날 짐을 꾸린다':t0;
+  pack.eff=Object.assign({},e0,{fn:s=>{if(tow(s)){F('line3',1);F('towerSeen',1);s.men=Math.min(100,s.men+3)}}});}
+ S[id].choices=rest;}
+
+/* 떠나는 날: 강을 건너는 길은 한 칸으로 묶는다 */
+for(const [id,re] of [['ss_leave',/하저터널|잠수교|청담/],['ch_leave',/3호선|잠수교|옥수역/]]){
+ const cs=S[id].choices;const g=cs.filter(c=>re.test(typeof c.t==='function'?c.t.toString():c.t));
+ const sid=subOf(id+'_cross',id,'강을 건너는 길. 어느 쪽도 안전하다고 말할 수 없다.',g);
+ const ifs=g.map(c=>c.if);const n=s=>ifs.filter(f=>!f||f(s)).length;
+ g.forEach(c=>andIf(c,s=>st.scene===sid||n(s)===1));
+ const rest=cs.filter(c=>!g.includes(c));const at=rest.findIndex(c=>c.t==='부천, 엄마에게 간다');
+ rest.splice(at<0?rest.length-1:at,0,{t:'강을 건넌다 — 남쪽으로',if:s=>n(s)>1,to:sid},...g);S[id].choices=rest;}
+
+/* 시골 마을: 뒤질 곳은 한 칸 */
+{const cs=S.e_village.choices;const g=cs.filter(c=>c.group==='vil');
+ subOf('e_village_loot','e_village','버려진 슈퍼, 무너진 축사, 바퀴가 빠진 트럭. 오래 머물 시간은 없다. 한 곳만.',g);
+ S.e_village.choices=[{t:'마을을 뒤진다',if:()=>!F('grp_vil'),to:'e_village_loot'},...cs.filter(c=>!g.includes(c))];}
+
+/* 강혁과의 이별: 보낼 때 무엇을 쥐여 줄지는 다음 화면 */
+{const cs=S.k13.choices;const g=cs.filter(c=>/보낸다$/.test(c.t));
+ subOf('k13_send','k13','그는 이미 가방을 멨다. 손에 무엇이라도 쥐여 보내고 싶다.',g);
+ S.k13.choices=[cs[0],{t:'보낸다',to:'k13_send'},...cs.filter(c=>c!==cs[0]&&!g.includes(c))];}
+
+/* 평택 정문: 서류는 한 칸 */
+{const cs=S.p_gate.choices;const g=cs.filter(c=>/서류/.test(c.t));
+ subOf('p_docs','p_gate','가방 안쪽 지퍼. 37층에서 가져온 종이 뭉치가 손에 잡힌다.',g);
+ S.p_gate.choices=[{t:'가방에서 서류를 꺼낸다',sp:1,if:s=>g.some(c=>!c.if||c.if(s)),to:'p_docs'},...cs.filter(c=>!g.includes(c))];}
+
+/* 살인 사건: 지목은 다음 화면 */
+{const cs=S.m_murder.choices;const g=cs.filter(c=>/지목한다$/.test(c.t)&&!/아무도/.test(c.t));
+ subOf('m_accuse','m_murder','모두의 눈이 당신에게 쏠린다. 이름 하나면 된다.',g);
+ S.m_murder.choices=cs.filter(c=>!g.includes(c));S.m_murder.choices.splice(1,0,{t:'범인을 지목한다',to:'m_accuse'});}
+
+/* 여의도 탈출: 편의점과 주차장을 하나로 */
+{const cs=S.yd_escape.choices;const mt=cs.find(c=>c.once==='yMart'),pk=cs.find(c=>/주차장/.test(c.t));
+ Object.assign(mt,{t:'지하 상가 편의점을 털고, 공원 지하 주차장에서 밤을 넘긴다',ok:'yd_night',fail:'yd_night',adv:60});hideC(pk);}
+
+/* ---------- 특수 선택지 표시 · 일반 장면은 잠긴 것부터 숨김 ---------- */
+const DECISIVE=new Set(['m_raid','ch_fire','ss_flood','ss_vent','m_siege','m_bite','m_deal','th_men','g_floor','yd_roof','ch_crypt2','ss_ration','se_offer','m_d11','ch_gate','ss_tun3','y_drive','y_dusk','g_dusk','ss_leave','ch_leave','m_d13','k13','k13_send','p_gate','m_murder','e_village_loot','ss_leave_cross','ch_leave_cross']);
+for(const [id,sc] of Object.entries(S)){sc._id=id;if(Array.isArray(sc.choices))sc.choices.forEach(c=>{if(!c)return;const to=typeof c.to==='string'?c.to:typeof c.ok==='string'?c.ok:'';
+ if(c.need==='radio'||(c.lock&&/heli/.test(to))||/^(hid_|alt_|kd_|sd_)/.test(to)||to==='yd_late'||to==='g_decoy'||(c.once&&/^disg/.test(c.once))||/^지도에/.test(typeof c.t==='string'?c.t:'')||/상처를 직접 꿰맨다|소매를 걷어|옷을 걷어|그 얼굴을 찾아 처단|난간 밖으로 민다|강혁이 앞에 선다|배 씨 창고|항생제를 먹는다/.test(typeof c.t==='string'?c.t:''))c.sp=1})}
+{const _cl=choiceList;choiceList=function(sc){const cs=_cl(sc);if(!sc||DECISIVE.has(sc._id))return cs;
+ const norm=cs.filter(c=>!c.sp);if(norm.length<=3)return cs;
+ const locked=cs.filter(c=>!c.sp&&lockReason(c));if(!locked.length||locked.length>=norm.length)return cs;
+ let drop=norm.length-3;return cs.filter(c=>!(drop>0&&!c.sp&&locked.includes(c)&&drop--))}}
+
 titleScreen();
 
 </script>
