@@ -355,6 +355,35 @@ p.sfx{font-size:27px!important}
 @media (min-width:1024px){#app.scn .story p{font-size:17px}#app.scn .ch-btn{font-size:15.5px;min-height:52px}#app.scn .hd .day{font-size:30px}#app.scn .loc{font-size:13px}}
 .day{font-size:28px}.who{font-size:20px}.clock{font-size:17px}
 .story.tight > p{line-height:1.68}.story.tight{gap:10px}.story.tight .dqb{margin:0}
+
+/* ===== v26 · 모바일 상단 정리 ===== */
+@media (max-width:1023px){
+ #app.scn{gap:10px}
+ #app.scn .hd{align-items:center;padding-bottom:7px;border-bottom-width:1px}
+ #app.scn .hd .who{display:none}
+ #app.scn .hdl{gap:9px!important;align-items:center}
+ #app.scn .hav{width:34px;height:34px;margin-bottom:0;border-width:1.5px}
+ #app.scn .hd .day{font-size:21px;line-height:1.2}
+ #app.scn .rt2{flex-direction:row!important;align-items:center!important;gap:6px!important}
+ #app.scn .rt2 .rdt{font-family:inherit;font-size:13px;color:var(--muted);margin:0;line-height:1}
+ #app.scn .rt2 .rdt::after{content:' ·';}
+ #app.scn .clock,#app.scn .clock.ff{font-size:13px;font-weight:600;color:var(--muted)}
+ #app.scn .ibtn.tb{width:30px;height:30px}
+ #app.scn .glbl{display:none}
+ #app.scn .gtrack{padding:2px 0}
+ #app.scn .gbar{height:6px}
+ #app.scn .dtchip{top:-14px;font-size:12px;color:var(--muted)}
+ #app.scn .strow{flex-direction:column;gap:6px}
+ #app.scn .stbox{width:auto;flex-direction:row;gap:14px;padding:0;background:none;border-radius:0}
+ #app.scn .stbox .st{flex:1;min-width:0}
+ #app.scn .st .l{font-size:12px}
+ #app.scn .sbox{border:none;padding:0;gap:4px}
+ #app.scn .sbox .h{display:none}
+ #app.scn .sbox.empty{display:none}
+ #app.scn .tag{font-size:11.5px;padding:1px 7px}
+ #app.scn .sitbox.quiet{display:none}
+ .toast{top:auto;bottom:92px;font-size:13px;padding:8px 14px;pointer-events:none}
+}
 </style>
 </head>
 <body>
@@ -5348,6 +5377,29 @@ E.immune.t=s=>'군의관이 혈액 검사 결과를 두 번, 세 번 확인했�
 E.sacrifice.t=s=>'「가!」\n\n'+(compNames().join(', ')||'그들')+'이(가) 뒤돌아보며 멀어지는 것을 보았다. 무기를 고쳐 쥐자 앞에서 수십 개의 손이 다가왔다.\n\n무섭지 않았다고 하면 거짓말이다. 무릎이 떨렸고, 쥔 손에서 땀이 났다. 첫 번째를 쓰러뜨렸고, 두 번째도. 세 번째가 어깨를 물었을 때 등 뒤에서 문이 닫히는 소리를 들었다. 그거면 됐다.\n\n안전지대 기록부 한 칸에 누군가 당신 이름을 적었다. 「생존자 없음」 옆에, 작게. 「덕분에」.';
 E.community.t=s=>'셔터 위에 새 글씨를 걸었다. 「생존자 있음 — 들어와도 됩니다」.\n\n옥상의 상추는 세 번째 수확을 맞았다. 로비엔 아이들 그림이 붙었다. 오 실장의 사무실은 의무실이 되었다. 진짜 의무실. 그 책상에서 처음 상처를 꿰맨 날, 손이 조금 떨렸다. 그 방에서 있었던 일을 아는 사람은 이제 몇 남지 않았다.\n\n당신은 하루에 세 번 상처를 꿰매고, 밤엔 정문 불침번을 선다. 살아남는 것과 사는 것의 차이를, 이제는 안다.';
 E.judge.t=s=>'정문 앞에서 돌아섰다. 철조망 안에선 문을 잠그고 잘 수 있겠지. 하지만 바깥엔 아직 숫자가 붙은 냉장실 문이 있다.\n\n그 뒤로 국도를 따라 이야기가 돌았다. 약탈자 아지트가 하나씩 불탄다고. 갇혔던 여자들이 풀려나고, 문 위에 숫자 대신 이름이 적혀 있다고. 불탄 아지트마다 꿰맨 자국이 반듯한 시체들이 남아 있다고.\n\n당신 이름은 아니다. 「간호사」라고만 불린다. 밤에 혼자 상처를 꿰매다 문득 손을 멈춘다. 이 손이 누굴 살리고 누굴 죽였는지, 세는 걸 그만둔 지 오래다.';
+
+/* ===== 34: 화면 정리 — 상태칸·목표 박스는 필요할 때만 ===== */
+SUM.e_road2='평택까지 20km · 휴게소에 묶인 사람들';
+
+/* 상태칸: '이상 없음'만 있으면 숨김 표시 */
+{const _sh=statHTML;statHTML=function(){let h=_sh();
+  if(/<div class="tags"><span class="tag ">이상 없음<\/span><\/div><\/div>/.test(h))h=h.replace('<div class="sbox">','<div class="sbox empty">');
+  return h}}
+
+/* 장·목표 박스: 장이 바뀐 장면과 위기 때만 */
+let SIT_CHAP=null,SIT_SCENE=null;
+{const _sit=sitHTML;sitHTML=function(){let h=_sit();
+  const key=(st.ch||'')+':'+(st.chap||1);
+  if(SIT_CHAP!==key){SIT_CHAP=key;SIT_SCENE=st.scene}
+  const show=st.crisis||st.scene===SIT_SCENE;
+  return show?h:h.replace('class="sitbox','class="sitbox quiet')}}
+
+/* 메뉴 맨 위에 현재 장·목표 */
+{const _m=openMenu;openMenu=function(){_m();const m=document.querySelector('.ov .menu');if(!m||screen!=='scene')return;
+  let s=SUM[st.scene];if(typeof s==='function')s=s(st);
+  const d=document.createElement('div');d.className='sitbox';d.style.marginBottom='6px';
+  d.innerHTML=`<span class="gl">${esc(kt(CHNUM[st.chap||1]+' '+(st.chapT||'')))}</span><span class="sit">목표: ${esc(kt(goalOf()))}</span>`+(s?`<span class="gl" style="margin-top:2px">${esc(kt(s))}</span>`:'');
+  m.insertBefore(d,m.firstChild)}}
 
 titleScreen();
 
