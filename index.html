@@ -5858,24 +5858,24 @@ S.y_momsms={loc:hereLoc,
  text:s=>'휴대폰이 한 번 떨었다. 밤새 어딘가에 걸려 있다가 이제야 들어온 문자.\n\n「서윤아 현관 앞에 옆집 아저씨가 계속 서 있어」\n\n「밤새, 불러도 대답을 안 해」\n\n보낸 시각, '+(day()>2?'어제 ':'')+'04:12. 답장을 썼다. 「문 열지 마. 소리 내지 마. 기다려.」 전송 실패. 다시. 전송 실패.',
  memo:{t:'엄마 문 열지 마. 기다려.',warn:1},
  choices:[{t:'휴대폰을 가슴 주머니에 넣는다',to:momBack,eff:{men:-6}}]};
-Object.assign(SUM,{y_momcall:'엄마의 전화 · 부천은 다리 너머',y_momcall2:'엄마의 전화 · 옆집 아저씨가 물렸다',y_momsms:'엄마의 문자 · 현관 앞에 누가 서 있다'});
+Object.assign(SUM,{y_momcall:'엄마의 전화 · 부천은 다리 너머',y_momcall2:'엄마의 전화 · 옆집 아저씨가 물렸다'});
 
 {const MOMS=new Set(['y_momcall','y_momcall2','y_momsms']);
  const NOMOM=/^(th_|c_|k_)/,GATE=new Set(['y_mart_gate','ss_gate','ch_gate','m_arrive','ss_arrive','ch_arrive']);
- const CALL_AT=T(1,20,0),CALL_END=T(2,1,0),SMS_AT=T(2,7,30),SMS_END=T(4,0,0);
+ const CALL_AT=T(1,20,0),CALL_END=T(2,1,0);
  const _go=go;go=function(id,opt){
-  if(st&&st.ch==='seoyun'&&typeof id==='string'&&!MOMS.has(id)&&!id.startsWith('death:')&&!id.startsWith('end:')){
+  if(st&&st.ch==='seoyun'&&typeof id==='string'&&!MOMS.has(id)&&!id.startsWith('death:')&&!id.startsWith('end:')&&!F('momCallDone')){
    const rid=resolve(id),sc=S[rid];
    const hold=NOMOM.test(st.scene||'')||NOMOM.test(rid)||GATE.has(rid);
-   if(sc&&!sc.crisis&&!sc.urgent&&!st.crisis){
-    const at=Math.max(st.sec,sc.time||0);
-    if(!F('momCallDone')){
-     if(st.sec>=CALL_END)F('momCallDone',1);
-     else if(at>=CALL_AT&&!hold){F('momCallDone',1);F('momNext',resolve(id));if(st.sec<CALL_AT)advance(CALL_AT);return _go('y_momcall',opt)}}
-    else if(F('mom')&&!F('momSmsDone')){
-     if(st.sec>=SMS_END)F('momSmsDone',1);
-     else if(at>=SMS_AT&&!hold&&!MOMS.has(st.scene)){F('momSmsDone',1);F('momNext',resolve(id));if(st.sec<SMS_AT)advance(SMS_AT);return _go('y_momsms',opt)}}}}
+   if(st.sec>=CALL_END)F('momCallDone',1);
+   else if(sc&&!sc.crisis&&!sc.urgent&&!st.crisis&&!hold&&Math.max(st.sec,sc.time||0)>=CALL_AT){
+    F('momCallDone',1);F('momNext',rid);if(st.sec<CALL_AT)advance(CALL_AT);return _go('y_momcall',opt)}}
+  /* 엄마의 문자: 따로 끼어들지 않고, 2일 아침 둑길이나 은신처 첫 일지에 한 문단으로 */
+  if(st&&st.ch==='seoyun'&&typeof id==='string'&&MOM_SMS_AT.has(id)&&F('mom')&&!F('momSmsDone')){F('momSmsDone',1);F('momSmsAt',id);st.men=Math.max(0,st.men-6)}
   return _go(id,opt)}}
+const MOM_SMS_AT=new Set(['y_day2','m_d3','ss_d3','ch_d3']);
+const momSmsPara=()=>'\n\n휴대폰에 엄마 문자가 와 있다. '+(day()>2?'어제 ':'')+'새벽 4시 12분. 밤새 어딘가에 걸려 있다가 이제야 들어왔다.\n\n「서윤아 현관 앞에 옆집 아저씨가 계속 서 있어」\n\n「밤새, 불러도 대답을 안 해」\n\n답장을 썼다. 「문 열지 마. 소리 내지 마. 기다려.」 전송 실패. 몇 번을 다시 보내도 전송 실패.';
+MOM_SMS_AT.forEach(id=>{const t0=S[id].text;S[id].text=s=>{const t=typeof t0==='function'?t0(s):t0;return (F('momSmsAt')===id&&s.scene===id)?t+momSmsPara():t}});
 
 /* ---------- 2. 시간·설정 ---------- */
 /* 1일 오전 강변북로: 아직 간판도 현수막도 없다 */
