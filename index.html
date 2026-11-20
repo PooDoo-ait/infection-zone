@@ -458,6 +458,9 @@ html[data-fs] .story p.sfx{font-size:22px!important}
 /* v31 · 바깥 소식 */
 .story .tick{font-size:13px;line-height:1.65;color:var(--muted);font-style:italic;margin:2px 0 4px;padding-left:10px;border-left:2px solid var(--line2);animation:tkin .9s ease both}
 @keyframes tkin{from{opacity:0}to{opacity:1}}
+
+/* v44 문장 단위 줄바꿈 */
+.story p .sn.kp{display:inline-block}
 </style>
 </head>
 <body>
@@ -6074,6 +6077,33 @@ Object.assign(SUM,{e_home3:s=>F('momAlive')?'엄마의 집 · 엄마는 살아 �
 
 /* 13일 무전 하위 화면: 무전기를 잃었을 때 막히지 않게 */
 for(const id of ['ss_d13','ch_d13'])if(S[id+'_radio'])S[id+'_radio'].choices.push({t:'무전기를 끈다',if:s=>!has('radio'),to:id});
+
+/* ===== 44: 문장 단위 줄바꿈 — 한 줄에 다 들어가는 문장은 두 줄로 쪼개지 않는다 ===== */
+const SN_END=/([.?!…][”’」』)]*)(\s+)/g;
+function snWrap(p){if(p.dataset.sn)return;p.dataset.sn='1';
+ const nodes=[...p.childNodes];const frag=document.createDocumentFragment();let cur=null;
+ const add=n=>{if(!cur){cur=document.createElement('span');cur.className='sn';frag.appendChild(cur)}cur.appendChild(n)};
+ for(const n of nodes){
+  if(n.nodeType===3){const t=n.textContent;let last=0,m;SN_END.lastIndex=0;
+   while((m=SN_END.exec(t))){const piece=t.slice(last,m.index+m[1].length);if(piece)add(document.createTextNode(piece));frag.appendChild(document.createTextNode(m[2]));cur=null;last=m.index+m[0].length}
+   const rest=t.slice(last);if(rest)add(document.createTextNode(rest))}
+  else if(n.nodeType===1&&(n.classList.contains('dqb')||n.tagName==='BR')){cur=null;frag.appendChild(n)}
+  else add(n)}
+ p.textContent='';p.appendChild(frag)}
+function snFit(){const story=app.querySelector('.story');if(!story)return;
+ const ps=[...story.querySelectorAll(':scope > p')].filter(p=>!p.classList.contains('me')&&!p.classList.contains('sfx'));if(!ps.length)return;
+ const hid=ps.filter(p=>p.hidden);hid.forEach(p=>p.hidden=false);
+ for(const p of ps){snWrap(p);const sns=[...p.querySelectorAll(':scope > .sn')];if(sns.length<2)continue;
+  const cs=getComputedStyle(p);const avail=p.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  sns.forEach(s=>{s.classList.remove('kp');s.style.whiteSpace='nowrap';s.style.display='inline-block'});
+  const ws=sns.map(s=>s.getBoundingClientRect().width);
+  sns.forEach((s,i)=>{s.style.whiteSpace='';s.style.display='';if(ws[i]<=avail-1)s.classList.add('kp')})}
+ hid.forEach(p=>p.hidden=true)}
+{const _p=paginate;paginate=function(){try{if(typeof deskLayout==='function')deskLayout();snFit()}catch(e){console.error(e)}return _p()}}
+{const _d=showDeath;showDeath=function(k){const r=_d(k);try{snFit()}catch(e){}return r}}
+{const _e=showEnding;showEnding=function(k){const r=_e(k);try{snFit()}catch(e){}return r}}
+if(typeof window.addEventListener==='function'){let tm=0;window.addEventListener('resize',()=>{clearTimeout(tm);tm=setTimeout(()=>{try{snFit()}catch(e){}},120)});
+ if(typeof document!=='undefined'&&document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{try{snFit()}catch(e){}});}
 
 titleScreen();
 
