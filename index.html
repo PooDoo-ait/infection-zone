@@ -459,6 +459,8 @@ html[data-fs] .story p.sfx{font-size:22px!important}
 .story .tick{font-size:13px;line-height:1.65;color:var(--muted);font-style:italic;margin:2px 0 4px;padding-left:10px;border-left:2px solid var(--line2);animation:tkin .9s ease both}
 @keyframes tkin{from{opacity:0}to{opacity:1}}
 
+/* v46 여러 쪽 점 */
+.pgdots.multi i{background:var(--line)!important}.pgdots.multi i.on{background:var(--ink2)!important}
 /* v44 문장 단위 줄바꿈 */
 .ch-btn{word-break:keep-all;overflow-wrap:anywhere}
 .story p .sn.kp{display:inline-block}
@@ -6177,6 +6179,28 @@ repD(D.hidBitten,[['마지막으로 귓가에 남은 건 사흘 전 그 사람�
 SUM.y_start='심정지 · 코드 블루 · 환자가 눈을 떴다';
 /* 첫 쪽 넘김 한마디: 펌프 경보 뒤 */
 PAGE.y_start=[2,'…방금 경보 울리지 않았나? 확인해 보고 올게.'];
+
+/* ===== 46: 한 장면을 여러 쪽으로 — 정해 둔 자리에서 반드시 끊는다 ===== */
+const PGX={y_start:[[2,'…방금 경보 울리지 않았나? 확인해 보고 올게.'],[5,'이상하다… 모니터는 반응이 없는데…?']]};
+{const _p=paginate;paginate=function(){const id=st&&st.scene;const cfg=PGX[id];if(!cfg)return _p();
+ if(typeof deskLayout==='function')deskLayout();try{snFit()}catch(e){}
+ const story=app.querySelector('.story'),box=app.querySelector('.choices');if(!story||!box)return;
+ const ps=[...story.querySelectorAll(':scope > p')].filter(p=>!p.classList.contains('me'));
+ const cuts=cfg.filter(c=>c[0]>=1&&c[0]<ps.length);if(!cuts.length)return _p();
+ const groups=[];let prev=0;cuts.forEach(c=>{groups.push(ps.slice(prev,c[0]));prev=c[0]});groups.push(ps.slice(prev));
+ const n=groups.length;
+ const tail=[...story.querySelectorAll(':scope > .memo, :scope > .mcard')];const ban=story.querySelector(':scope > .banner');const btns=[...box.children];
+ const mes=groups.map((g,i)=>{if(!i)return null;const me=document.createElement('p');me.className='me';me.textContent='「'+cuts[i-1][1]+'」';story.insertBefore(me,g[0]);return me});
+ const nb=document.createElement('button');nb.className='ch-btn me-btn';box.prepend(nb);
+ const dots=document.createElement('span');dots.className='pgdots multi';dots.setAttribute('aria-hidden','true');dots.innerHTML='<i></i>'.repeat(n);story.appendChild(dots);
+ const key=id+'@'+st.sec;
+ const show=pg=>{groups.forEach((g,i)=>g.forEach(e=>e.hidden=i!==pg));if(ban)ban.hidden=pg>0;tail.forEach(e=>e.hidden=pg<n-1);
+  mes.forEach((m,i)=>{if(m)m.hidden=i!==pg});btns.forEach(e=>e.hidden=pg<n-1);nb.hidden=pg===n-1;
+  if(pg<n-1)nb.innerHTML=`<span>${esc('「'+cuts[pg][1]+'」')}</span><span class="meta"><span class="pc nx">다음</span></span>`;
+  dots.dataset.pg=pg?'2':'1';[...dots.children].forEach((d,i)=>d.classList.toggle('on',i===pg))};
+ let cur=0;const m=String(st.pg||'').match(/^(.*)#(\d+)$/);if(m&&m[1]===key)cur=Math.min(+m[2],n-1);
+ nb.onclick=()=>{cur=Math.min(cur+1,n-1);st.pg=key+'#'+cur;show(cur);story.classList.remove('fade');void story.offsetWidth;story.classList.add('fade');window.scrollTo(0,0);save()};
+ show(cur)}}
 
 titleScreen();
 
